@@ -1,7 +1,7 @@
 Files:
 trie_oop.py - description and implementation of class Trie and Node
 trie_cmd.py - execution example
-trie_dot.gv - graphviz file containing dot code, generated in class Trie
+test.py - a short test
 words_linux.txt - example input file with set of words
 
 In order to have the graphviz visualization part working, you need to follow the instructions as described here:
@@ -9,20 +9,13 @@ https://pypi.python.org/pypi/graphviz
 Compiling the dot code from python requires the dot executable to be on systems' path.
 
 You can compile the dot code also from the cmd/console, for example as:
-dot -Tpdf -o output.pdf trie_dot.gv
+dot -Tpdf -o output.pdf top5000.gv
 
-Several customisations will result in a more advanced visualization. For example, a Trie can be represented growing radially. For that, add these changes to the dot code:
+Several customisations will result in a more advanced visualization. Please see the graphviz documentation (file dot.1.pdf or online) for instructions. Here are some configurations I used:
 
-	layout=twopi
-	fixedsize=true
-	width=0.2
-	height=0.2
-	# the numbers in the ranksep represent the increment in radius for each rank
-	ranksep="5 10 15 20 15 10 5 2 2 1 1 1 1 1"
-	splines=line
-	root=0
-
-	node [shape=circle fixedsize=true width=0.25 height=0.25]
-	
-	
-Please see the graphviz documentation.
+	//layout=twopi
+	//ranksep="10 20 15 10 5 5 4 4 3 3 2 2 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1"
+	//nodesep=10
+	//splines=ortho
+	//root=0
+	//overlap=false

@@ -2,20 +2,17 @@ class Trie(object):
     """ root node """
 
     # empty constructor
-    def __init__ (self):
-        self.root=Node('*')
-        # the root will always containt the * symbol
-        # the roon is an object of class Node, and will be used throughout this class
-        self.size=0
-        self.nrWords=0
-        self.nrLetters=0
+    def __init__(self):
+        self.root = Node('*')
+        self.nrWords = 0
+        self.nrLetters = 0
+        self.size = 0
 
     # 'inherit' the method addWord from Node
     def addWord(self, word):
-        self.nrWords=self.nrWords+1
-        self.nrLetters=self.nrLetters+len(word)
-        # adds the word to the Node root
-        self.size=self.size+self.root.addWord(word)
+        self.nrWords = self.nrWords + 1
+        self.nrLetters = self.nrLetters + len(word)
+        self.size = self.size + self.root.addWord(word)
         return True
 
     # 'inherit' the method hasWord from Node
@@ -24,48 +21,54 @@ class Trie(object):
 
     # print all information method
     def display(self):
-        print(self.size)
+        # print(self.size)
         self.root.display()
-
-    # getter method for size
-    def getSize(self):
-        return self.size
-
-    # getter method for nrLetters
-    def countLetters(self):
-        return self.nrLetters
 
     # getter words for nrWords
     def countWords(self):
         return self.nrWords
 
+    # getter method for nrLetters
+    def countLetters(self):
+        return self.nrLetters
+
+    # getter method for size
+    def getSize(self):
+        return self.size
+
     # compute compression
     def compression(self):
-        return self.nrLetters/self.size
+        return self.nrLetters / self.size
 
     # create graphviz Digraph
-    # requires the python graphviz library!
-    def diagram(self):
+    def diagram(self, filename, render):
         from graphviz import Digraph
         from queue import Queue
-        diagram=Digraph(comment='The Trie')
+        diagram = Digraph(comment='The Trie')
 
-        i=0
+        i = 0
 
+        diagram.attr('node', fontsize='4')
+        diagram.attr('node', height='0.1')
+        diagram.attr('node', width='0.1')
+        diagram.attr('node', fixedsize='true')
         diagram.attr('node', shape='circle')
+        diagram.attr('edge', arrowsize='0.3')
         diagram.node(str(i), self.root.getValue())
 
-        q=Queue()
+        q = Queue()
         q.put((self.root, i))
-        
+
         while not q.empty():
 
-            node, parent_index=q.get()
+            node, parent_index = q.get()
 
             for child in node.getChildren():
-                i+=1
+                #print('current parent: ', node.getValue(), parent_index)
+                i += 1
+                #print('current child: ', child.getValue(), i)
                 if child.getEnding():
-                    diagram.attr('node', shape='doublecircle')
+                    diagram.attr('node', shape='diamond')
                     diagram.node(str(i), child.getValue())
                     diagram.attr('node', shape='circle')
                 else:
@@ -73,34 +76,30 @@ class Trie(object):
                 diagram.edge(str(parent_index), str(i))
                 q.put((child, i))
 
-        o=open('trie_dot.gv', 'w')
+        o = open(filename + '.gv', 'w')
         o.write(diagram.source)
+        # print(diagram.source)
+        if render:
+            diagram.render(filename + '.gv', view=False)
         o.close()
-        diagram.render('trie_dot.gv', view=True)
-        'trie_dot.gv.pdf'
-
-
-
 
 
 class Node(object):
-    """ any node in the Trie"""
+    """ any node """
 
     # empty constructor
-    def __init__ (self, val):
-        self.value=val
-        self.children=[]
-        self.ending=False
-        self.di=0
+    def __init__(self, val):
+        self.value = val
+        self.children = []
+        self.ending = False
 
-    # toStr for a node will return it's value
-    def __str__ (self):
+    def __str__(self):
         return str(self.value)
 
     # setter method for value
     def setValue(self, val):
-        self.value=val
-    
+        self.value = val
+
     # adds a child
     def add_child(self, child):
         self.children.append(child)
@@ -112,7 +111,7 @@ class Node(object):
 
     # setter method for ending
     def setEnding(self, T_or_F):
-        self.ending=T_or_F
+        self.ending = T_or_F
 
     # check if a letter of interest is already a child
     def contains_child(self, letter):
@@ -133,43 +132,45 @@ class Node(object):
         return self.ending
 
     def addWord(self, word):
-        size_increment=0
-        if word=='':
+        size_increment = 0
+        if word == '':
             self.setEnding(True)
-            return size_increment # stops the recursion
-        result=None
+            return size_increment  # stops the recursion
+        result = None
         for child in self.children:
-            if child.value==word[0]:
-                result=child
+            if child.value == word[0]:
+                result = child
                 return size_increment + result.addWord(word[1:])
-        if result==None:
-            new_child=Node(word[0])
+        if result == None:
+            new_child = Node(word[0])
             self.add_child(new_child)
-            size_increment=size_increment+1
+            size_increment = size_increment + 1
             return size_increment + new_child.addWord(word[1:])
         return size_increment
 
     # checks if word is in the Trie
     def hasWord(self, word):
-        if word=='':
+        if word == '':
             if self.getEnding():
                 return True
             else:
                 return False
         for child in self.children:
-            if child.value==word[0]:
+            # print(child.value)
+            if child.value == word[0]:
                 return True and child.hasWord(word[1:])
         return False
 
     # prints object
     def display(self):
         if self.getEnding():
-            ending='#'
+            ending = '_'
         else:
-            ending=' '
+            ending = ' '
         print(ending, self.value, ending)
 
-        child_nodes=self.getChildren()
+        child_nodes = self.getChildren()
         for node in child_nodes:
             node.display()
+
         return True

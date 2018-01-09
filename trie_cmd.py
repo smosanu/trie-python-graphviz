@@ -1,22 +1,29 @@
 from trie_oop import *
-import random
 
-trie=Trie()
+trie = Trie()
 
-file_in='words_linux.txt'
-f=open(file_in)
-cnt=0
+file_in = 'top5000.txt'
+f = open(file_in)
 for line in f:
-	line=line.strip()
-	trie.addWord(line)
-	cnt+=1
+    trie.addWord(line.strip())
 f.close()
 
+searched_word = 'nationwide'
+print('foud "', searched_word, '":', trie.hasWord(searched_word))
+searched_word = 'statistical'
+print('foud "', searched_word, '":', trie.hasWord(searched_word))
+searched_word = 'domino'
+print('foud "', searched_word, '":', trie.hasWord(searched_word))
+searched_word = 'dominique'
+print('foud "', searched_word, '":', trie.hasWord(searched_word))
+
+print()
+print('#words:', trie.countWords())
+print('size:', trie.getSize())
+print('#letters:', trie.countLetters())
+print('compression:', trie.compression())
+
+
+print()
 trie.display()
-
-print('#words:',trie.countWords())
-print('size:',trie.getSize())
-print('#letters:',trie.countLetters())
-print('compression:',trie.compression())
-
-trie.diagram()
+trie.diagram('top5000', True)
